@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.nazarethlabs"
-version = "x.x.x"
+version = "0.2.0"
 
 java {
     toolchain {
