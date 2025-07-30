@@ -4,9 +4,11 @@
 
 Joseph é uma aplicação para cuidar de finanças pessoais, com foco em ações (bolsa de valores). O objetivo é ajudar no controle, análise e acompanhamento de investimentos.
 
+<!--
 <div align="center">
   <img src="assets/images/logo-banner.png" alt="Logo do Joseph"/>
 </div>
+-->
 
 ## 🏺 Motivação do nome
 
