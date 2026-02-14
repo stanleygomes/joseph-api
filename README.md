@@ -210,4 +210,4 @@ Esse fluxo garante qualidade, rastreabilidade e entrega contínua de valor.
 
 ## 📜 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE.md` para mais detalhes.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE.md](LICENSE.md) para mais detalhes.
