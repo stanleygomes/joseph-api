@@ -61,7 +61,7 @@ class WebClientAdapter(
                 throw e
             }
 
-            throw IntegrationException(errorMessage, e)
+            throw IntegrationException(errorMessage)
         }
     }
 

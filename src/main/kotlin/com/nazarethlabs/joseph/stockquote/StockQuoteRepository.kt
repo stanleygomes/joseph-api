@@ -6,9 +6,9 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Repository
-interface StockQuoteRepository : JpaRepository<StockQuote, UUID> {
-    fun findByStockIdInAndQuoteDate(
+interface StockQuoteRepository : JpaRepository<StockQuoteEntity, UUID> {
+    fun findByStockEntityIdInAndQuoteDate(
         stockIds: List<UUID>,
         date: LocalDate,
-    ): List<StockQuote>
+    ): List<StockQuoteEntity>
 }

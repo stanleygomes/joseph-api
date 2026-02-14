@@ -1,5 +1,6 @@
 package com.nazarethlabs.joseph.stockquote
 
+import com.nazarethlabs.joseph.core.dto.DefaultResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -26,7 +27,7 @@ class StockQuoteController(
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = StockQuotePendingResponse::class),
+                        schema = Schema(implementation = DefaultResponseDto::class),
                     ),
                 ],
             ),
@@ -34,8 +35,30 @@ class StockQuoteController(
         ],
     )
     @PostMapping("/update-pending-day-quote")
-    fun updatePendingDayQuote(): ResponseEntity<StockQuotePendingResponse> {
+    fun updatePendingDayQuote(): ResponseEntity<DefaultResponseDto> {
         val response = stockQuoteService.updatePendingDayQuote()
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
+
+    @Operation(
+        summary = "Envia email com relatório de cotações de ontem vs hoje",
+        responses = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Relatório enviado com sucesso",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = DefaultResponseDto::class),
+                    ),
+                ],
+            ),
+            ApiResponse(responseCode = "502", description = "Erro no envio de email"),
+        ],
+    )
+    @PostMapping("/send-report-email")
+    fun sendQuoteReportEmail(): ResponseEntity<DefaultResponseDto> {
+        val response = stockQuoteService.sendQuoteReportEmail()
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 }

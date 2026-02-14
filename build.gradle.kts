@@ -24,15 +24,22 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.github.spullara.mustache.java:compiler:0.9.10")
+
     runtimeOnly("org.postgresql:postgresql")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -64,6 +71,10 @@ tasks.jacocoTestReport.configure {
                 exclude(
                     "**/core/client/**",
                     "**/JosephApplication*",
+                    "**/*Entity*",
+                    "**/*Dto*",
+                    "**/*Request*",
+                    "**/*Response*",
                 )
             },
         ),

@@ -14,7 +14,7 @@ import java.util.UUID
 @Entity
 @Table(name = "stocks")
 @SQLRestriction(value = "deleted_at IS NULL")
-data class Stock(
+data class StockEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,

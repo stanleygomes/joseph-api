@@ -1,6 +1,6 @@
 package com.nazarethlabs.joseph.stock
 
-fun Stock.toResponse(): StockResponse =
+fun StockEntity.toResponse(): StockResponse =
     StockResponse(
         id = this.id!!,
         ticker = this.ticker,

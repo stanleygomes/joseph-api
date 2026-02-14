@@ -19,8 +19,8 @@ class BrapiClientTest {
     @InjectMocks
     private lateinit var brapiClient: BrapiClient
 
-    private val brapiQuoteResult =
-        BrapiQuoteResult(
+    private val brapiQuoteResultResponse =
+        BrapiQuoteResultResponse(
             symbol = "PETR4",
             longName = "Petrobras",
             shortName = "PETR4",
@@ -33,7 +33,7 @@ class BrapiClientTest {
             marketCap = 1000000L,
             logoUrl = null,
         )
-    private val brapiQuoteResponse = BrapiQuoteResponse(results = listOf(brapiQuoteResult))
+    private val brapiQuoteResponse = BrapiQuoteResponse(results = listOf(brapiQuoteResultResponse))
 
     @Test
     fun `getQuotes deve retornar lista vazia se lista de tickers for vazia`() {

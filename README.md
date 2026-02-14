@@ -1,18 +1,20 @@
-# Joseph 🧑‍💻
+# 🧑‍💻 Joseph
 
-## Sobre o projeto 📈
+## 📈 Sobre o projeto
 
 Joseph é uma aplicação para cuidar de finanças pessoais, com foco em ações (bolsa de valores). O objetivo é ajudar no controle, análise e acompanhamento de investimentos.
 
+<!--
 <div align="center">
   <img src="assets/images/logo-banner.png" alt="Logo do Joseph"/>
 </div>
+-->
 
-### Motivação do nome 🏺
+## 🏺 Motivação do nome
 
 O nome "Joseph" faz referência a José do Egito, personagem bíblico conhecido por sua sabedoria em administrar recursos e planejar para o futuro. Assim como José ajudou o Egito a se preparar para tempos de abundância e escassez, esta aplicação busca auxiliar no planejamento e gestão financeira.
 
-## Arquitetura 🏗️
+## 🏗️ Arquitetura
 
 O projeto adota a **Vertical Slice Architecture** (Arquitetura de Fatia Vertical).
 
@@ -26,7 +28,7 @@ Dentro de cada fatia, o código é organizado em 3 camadas principais:
 
 Essa estrutura promove alta coesão e baixo acoplamento entre as funcionalidades, facilitando a manutenção e a evolução do sistema.
 
-## Requisitos
+## 📋 Requisitos
 
 - Java 21 ☕
 - Gradle 🛠️
@@ -34,7 +36,39 @@ Essa estrutura promove alta coesão e baixo acoplamento entre as funcionalidades
 
 IDE recomendata: [Intelij IDEA](https://www.jetbrains.com/idea/download/?section=linux)
 
-## Database Migrations com Flyway 🦅
+## 🚦 Como Executar o projeto
+
+### 1. Iniciar o Banco de Dados
+
+O projeto utiliza Podman Compose para gerenciar o container do banco de dados PostgreSQL, conforme definido no arquivo `podman-compose.yml`.
+
+Para iniciar o banco de dados em background, execute na raiz do projeto:
+
+```sh
+podman-compose up -d
+```
+
+Para parar e remover o container, execute:
+
+```sh
+podman-compose down
+```
+
+### 2. Executar a Aplicação
+
+Com o banco de dados em execução, você pode rodar a aplicação Spring Boot:
+
+```sh
+./gradlew bootRun
+```
+
+Para rodar em modo debug e conectar um depurador na porta `5005`:
+
+```sh
+./gradlew bootRun --debug-jvm
+```
+
+## 🦅 Database Migrations com Flyway
 
 O projeto utiliza o Flyway para gerenciar a evolução do esquema do banco de dados. O Spring Boot está configurado para executar automaticamente as migrações pendentes sempre que a aplicação é iniciada.
 
@@ -65,48 +99,18 @@ Para adicionar uma nova alteração ao banco de dados, siga estes passos:
 
 Ao iniciar a aplicação, o Flyway detectará este novo arquivo, executará o script no banco de dados e registrará a migração na sua tabela de controle de esquema.
 
-## Como Executar
-
-### 1. Iniciar o Banco de Dados 🗄️
-
-O projeto utiliza Podman Compose para gerenciar o container do banco de dados PostgreSQL, conforme definido no arquivo `podman-compose.yml`.
-
-Para iniciar o banco de dados em background, execute na raiz do projeto:
-
-```sh
-podman-compose up -d
-```
-
-Para parar e remover o container, execute:
-
-```sh
-podman-compose down
-```
-
-### 2. Executar a Aplicação ▶️
-
-Com o banco de dados em execução, você pode rodar a aplicação Spring Boot:
-
-```sh
-./gradlew bootRun
-```
-
-Para rodar em modo debug e conectar um depurador na porta `5005`:
-
-```sh
-./gradlew bootRun --debug-jvm
-```
-
-### 📜 Documentação da API (Swagger)
+## 📜 Documentação da API (Swagger)
 
 O projeto utiliza o Springdoc para gerar automaticamente a documentação da API no formato OpenAPI 3. Essa documentação é interativa e permite visualizar e testar todos os endpoints disponíveis diretamente pelo navegador.
+
+> **Atenção:** Todos os endpoints da API e o Swagger estão protegidos por autenticação OAuth2 via GitHub. Para acessar, é necessário autenticar-se com sua conta do GitHub.
 
 Com a aplicação em execução, você pode acessar a documentação através dos seguintes links:
 
 - [Swagger UI (Interface Gráfica)](http://localhost:8080/docs)
 - [Definição OpenAPI (JSON)](http://localhost:8080/api-docs)
 
-## Variáveis de Ambiente e Configurações Sensíveis 🔐
+## 🔐 Variáveis de Ambiente e Configurações Sensíveis
 
 Este projeto utiliza variáveis de ambiente para armazenar informações sensíveis, como tokens de API e chaves secretas. **Nunca coloque valores sensíveis diretamente no arquivo `application.yml` versionado!**
 
@@ -133,7 +137,7 @@ export RESEND_API_KEY=sua_api_key_aqui
 
 3. Nunca faça commit de arquivos com dados sensíveis! Use sempre variáveis de ambiente ou arquivos ignorados pelo Git.
 
-## Testes Unitários 🧪
+## 🧪 Testes Unitários
 
 O projeto utiliza o JUnit 5 e o Mockito para testes unitários em Kotlin. Os testes estão localizados no diretório `src/test/kotlin`.
 
@@ -145,85 +149,62 @@ Para executar todos os testes unitários, utilize:
 
 Os relatórios de teste são gerados em `build/reports/tests/test/index.html`.
 
-## Qualidade de Código com Ktlint 🎨
+## 🎨 Qualidade de Código com Ktlint
 
 O projeto utiliza o Ktlint para garantir um estilo de código consistente.
 - `./gradlew ktlintCheck` — Verifica se o código está em conformidade com as regras.
 - `./gradlew ktlintFormat` — Formata o código automaticamente para corrigir violações.
 
-## Versionamento e Release 🏷️
+## 🚀 Versionamento, Release e Deploy (CI/CD)
 
-O projeto utiliza **Git, Conventional Commits e o plugin Axion-Release** para automatizar o versionamento e a geração de changelogs. A versão é inferida a partir das tags do Git.
+O projeto utiliza um fluxo automatizado de CI/CD para garantir qualidade, versionamento semântico e deploy seguro. Veja como funciona cada etapa:
 
-### Pré-requisitos
+### a) Pull Request Validation (CI)
+- **Quando roda:** Em todo push pull requests.
+- **O que faz:**
+  - Executa testes automatizados (unitários, integração, etc).
+  - Roda linters (ktlint, etc).
+  - Checa cobertura de testes.
+  - (Opcional) Checa formatação/código estático.
+- **Objetivo:** Garantir que nada é mergeado sem passar por todos os checks de qualidade e testes.
 
-Para gerar o changelog, você precisa ter o `conventional-changelog-cli` instalado globalmente. Execute uma única vez:
-```sh
-npm install -g conventional-changelog-cli --registry=https://registry.npmjs.org/
-```
+### b) Release Automation (semantic-release)
+- **Quando roda:** Manualmente (workflow_dispatch).
+- **O que faz:**
+  - Analisa os commits seguindo Conventional Commits.
+  - Gera/atualiza o `CHANGELOG.md` com base nos commits relevantes (feat, fix).
+  - Cria uma nova tag de versão semântica.
+  - Atualiza arquivos de versão (`build.gradle.kts`, `application.yml`, etc).
+  - Abre um Pull Request automático com as alterações de changelog e versionamento.
+  - Só gera release se houver commit relevante (`feat`, `fix`).
+- **Objetivo:** Garantir versionamento semântico, changelog e versionamento de arquivos sempre corretos e auditáveis.
 
-### Como fazer um release
+### c) Deploy
+- **Quando roda:** Após o merge do PR de release (ou após a criação de uma nova tag/release na branch principal).
+- **O que faz:**
+  - Faz build do artefato final.
+  - Publica/deploya para ambiente de staging/produção.
+  - (Opcional) Notifica time, atualiza status, etc.
+  - Health check: `/actuator/health`
+- **Objetivo:** Garantir que só código validado, testado e versionado chegue ao ambiente de produção.
 
-Para automatizar o processo de release, utilize o Makefile incluso no projeto. Ele garante que o código está formatado, gera o changelog e cria a tag de versão automaticamente.
+---
 
-Execute:
+## 🤝 Como contribuir
 
-```sh
-make release
-```
+1. Dev cria branch `feature/xxx`.
+2. Abre Pull Request (PR) para `master`.
+3. Workflow de PR valida código (testes, lint, etc). Só pode dar merge se **todos os checks passarem**.
+4. Merge do PR na `master` dispara o workflow de release.
+5. Se houver `feat`/`fix`, gera nova tag, changelog, atualiza arquivos de versão e abre PR automático com essas alterações.
+6. Merge do PR automático de release.
+7. (Opcional) Workflow de deploy é disparado após merge desse PR ou após a criação da nova tag. Deploya para produção/staging.
 
-Esse comando executa, em ordem:
-- `./gradlew ktlintCheck` — Garante que o código está em conformidade com as regras de estilo.
-- `./gradlew generateChangelog` — Atualiza o `CHANGELOG.md` com base nos commits.
-- `./gradlew reckonTagPush` — Cria e envia a tag de versão baseada nos Conventional Commits.
-
-Se preferir, você ainda pode executar cada etapa manualmente conforme descrito abaixo:
-
-1.  **Desenvolva e faça commits** seguindo o padrão Conventional Commits.
-    - `feat:` para novas funcionalidades (resultará em um release `minor`).
-    - `fix:` para correções de bugs (resultará em um release `patch`).
-    - Adicione `BREAKING CHANGE:` no rodapé do commit para um release `major`.
-
-2.  **Gere o Changelog:** Rode o comando para atualizar o arquivo `CHANGELOG.md` com as últimas mudanças.
-    ```sh
-    ./gradlew generateChangelog
-    ```
-3.  **Faça o commit do Changelog:** Adicione o `CHANGELOG.md` atualizado em um commit.
-    ```sh
-    git add CHANGELOG.md
-    git commit -m "docs: update changelog for release"
-    ```
-4.  **Crie e envie a tag de versão:** Use a tarefa `reckonTagPush` para criar a tag Git e enviá-la para o repositório remoto. O plugin calculará a próxima versão (patch, minor ou major) automaticamente com base nos seus commits.
-    ```sh
-    # Para um release de patch (ex: 0.1.0 -> 0.1.1)
-    ./gradlew reckonTagPush
-
-    # Para forçar um release minor (ex: 0.1.1 -> 0.2.0)
-    ./gradlew reckonTagPush -Preckon.scope=minor
-    ```
------
-
-## 🤝 Como Contribuir
-
-Nosso fluxo de contribuição é baseado em Pull Requests diretamente neste repositório:
-
-1.  **Crie uma Branch** para sua nova feature ou correção. Use um nome descritivo (em inglês) e siga um padrão, como `feature/minha-nova-feature` ou `fix/corrige-bug-x`:
-  ```bash
-  git checkout -b feature/minha-nova-feature
-  ```
-2.  **Desenvolva e Faça o Commit** de suas mudanças. Escreva mensagens de commit claras e significativas seguindo o padrão [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-  ```bash
-  git commit -m "feat: Adiciona nova funcionalidade de busca por tags"
-  ```
-3.  **Faça o Push** para a sua branch:
-  ```bash
-  git push origin feature/minha-nova-feature
-  ```
-4.  **Abra um Pull Request** neste repositório. O título do PR deve ser claro e a descrição deve explicar o que foi feito, por que foi feito e como pode ser testado. Se o PR resolve uma Issue existente, mencione-a na descrição (ex: `Resolves #42`).
-
-    > **Importante:** O Pull Request só será aceito se passar por todos os checks automáticos definidos no workflow `pr-checks.yml`.
-    >
-    > **Atenção:** A porcentagem mínima de cobertura de testes exigida pelo CI é **95%**.
+   > **Importante:** O Pull Request só será aceito se passar por todos os checks automáticos definidos no workflow `pr-checks.yml`.
+   >
+   > **Atenção:** A porcentagem mínima de cobertura de testes exigida pelo CI é **95%**.
+   
+Esse fluxo garante qualidade, rastreabilidade e entrega contínua de valor.
 
 -----
 

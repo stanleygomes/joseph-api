@@ -37,14 +37,15 @@ class StockServiceTest {
         @Test
         fun `deve criar uma nova ação quando o ticker não existir`() {
             val request = CreateStockRequest(ticker = "MGLU3", companyName = "Magazine Luiza")
-            val newStock = Stock(id = UUID.randomUUID(), ticker = request.ticker, companyName = request.companyName)
+            val newStockEntity =
+                StockEntity(id = UUID.randomUUID(), ticker = request.ticker, companyName = request.companyName)
 
             `when`(stockRepository.findByTickerIncludingDeleted(request.ticker)).thenReturn(null)
-            `when`(stockRepository.save(any())).thenReturn(newStock)
+            `when`(stockRepository.save(any())).thenReturn(newStockEntity)
 
             val result = stockService.createStock(request)
 
-            assertEquals(newStock.id, result.id)
+            assertEquals(newStockEntity.id, result.id)
             assertEquals("MGLU3", result.ticker)
             verify(stockRepository).findByTickerIncludingDeleted(request.ticker)
             verify(stockRepository).save(any())
@@ -53,10 +54,15 @@ class StockServiceTest {
         @Test
         fun `deve lançar ResourceAlreadyExistsException quando o ticker já existir e estiver ativo`() {
             val request = CreateStockRequest(ticker = "PETR4", companyName = "Petrobras Nova")
-            val activeStock =
-                Stock(id = UUID.randomUUID(), ticker = "PETR4", companyName = "Petrobras Antiga", deletedAt = null)
+            val activeStockEntity =
+                StockEntity(
+                    id = UUID.randomUUID(),
+                    ticker = "PETR4",
+                    companyName = "Petrobras Antiga",
+                    deletedAt = null,
+                )
 
-            `when`(stockRepository.findByTickerIncludingDeleted(request.ticker)).thenReturn(activeStock)
+            `when`(stockRepository.findByTickerIncludingDeleted(request.ticker)).thenReturn(activeStockEntity)
 
             val exception =
                 assertThrows<ResourceAlreadyExistsException> {
@@ -70,28 +76,28 @@ class StockServiceTest {
         @Test
         fun `deve reativar e atualizar uma ação quando o ticker já existir e estiver deletado`() {
             val request = CreateStockRequest(ticker = "OIBR3", companyName = "Oi S.A. (Nova)")
-            val deletedStock =
-                Stock(
+            val deletedStockEntity =
+                StockEntity(
                     id = UUID.randomUUID(),
                     ticker = "OIBR3",
                     companyName = "Oi (Antiga)",
                     deletedAt = Instant.now(),
                 )
 
-            `when`(stockRepository.findByTickerIncludingDeleted(request.ticker)).thenReturn(deletedStock)
+            `when`(stockRepository.findByTickerIncludingDeleted(request.ticker)).thenReturn(deletedStockEntity)
             `when`(stockRepository.save(any())).thenAnswer { it.getArgument(0) }
 
             val result = stockService.createStock(request)
 
-            val stockCaptor = ArgumentCaptor.forClass(Stock::class.java)
-            verify(stockRepository).save(stockCaptor.capture())
-            val savedStock = stockCaptor.value
+            val stockEntityCaptor = ArgumentCaptor.forClass(StockEntity::class.java)
+            verify(stockRepository).save(stockEntityCaptor.capture())
+            val savedStock = stockEntityCaptor.value
 
             assertNull(savedStock.deletedAt, "A data de deleção deve ser nula (reativada)")
             assertEquals("Oi S.A. (Nova)", savedStock.companyName, "O nome da empresa deve ser atualizado")
-            assertEquals(deletedStock.id, savedStock.id, "O ID deve ser o mesmo do registro existente")
+            assertEquals(deletedStockEntity.id, savedStock.id, "O ID deve ser o mesmo do registro existente")
 
-            assertEquals(deletedStock.id, result.id)
+            assertEquals(deletedStockEntity.id, result.id)
             assertEquals("Oi S.A. (Nova)", result.companyName)
         }
     }
@@ -101,20 +107,20 @@ class StockServiceTest {
     inner class GetAllStocks {
         @Test
         fun `deve retornar uma lista de ações quando houver ações cadastradas`() {
-            val stocksFromRepo =
+            val stocksFromRepos =
                 listOf(
-                    Stock(id = UUID.randomUUID(), ticker = "PETR4", companyName = "Petrobras"),
-                    Stock(id = UUID.randomUUID(), ticker = "VALE3", companyName = "Vale"),
+                    StockEntity(id = UUID.randomUUID(), ticker = "PETR4", companyName = "Petrobras"),
+                    StockEntity(id = UUID.randomUUID(), ticker = "VALE3", companyName = "Vale"),
                 )
-            whenever(stockRepository.findAll()).thenReturn(stocksFromRepo)
+            whenever(stockRepository.findAll()).thenReturn(stocksFromRepos)
 
             val result = stockService.getAllStocks()
 
             assertEquals(2, result.size, "A lista de resultados deve conter 2 ações")
             assertEquals("PETR4", result[0].ticker)
             assertEquals("Vale", result[1].companyName)
-            assertEquals(stocksFromRepo[0].id, result[0].id)
-            assertEquals(stocksFromRepo[1].id, result[1].id)
+            assertEquals(stocksFromRepos[0].id, result[0].id)
+            assertEquals(stocksFromRepos[1].id, result[1].id)
 
             verify(stockRepository).findAll()
         }
@@ -136,8 +142,8 @@ class StockServiceTest {
         @Test
         fun `deve retornar uma ação quando o ID existir`() {
             val stockId = UUID.randomUUID()
-            val stock = Stock(id = stockId, ticker = "ITSA4", companyName = "Itaúsa")
-            whenever(stockRepository.findById(stockId)).thenReturn(Optional.of(stock))
+            val stockEntity = StockEntity(id = stockId, ticker = "ITSA4", companyName = "Itaúsa")
+            whenever(stockRepository.findById(stockId)).thenReturn(Optional.of(stockEntity))
 
             val result = stockService.getStockById(stockId)
 
@@ -164,15 +170,15 @@ class StockServiceTest {
         @Test
         fun `deve marcar uma ação como deletada quando o ID existir`() {
             val stockId = UUID.randomUUID()
-            val stock = Stock(id = stockId, ticker = "BBDC4", companyName = "Bradesco")
-            whenever(stockRepository.findById(stockId)).thenReturn(Optional.of(stock))
+            val stockEntity = StockEntity(id = stockId, ticker = "BBDC4", companyName = "Bradesco")
+            whenever(stockRepository.findById(stockId)).thenReturn(Optional.of(stockEntity))
 
             stockService.deleteStock(stockId)
 
-            val stockCaptor = ArgumentCaptor.forClass(Stock::class.java)
-            verify(stockRepository).save(stockCaptor.capture())
+            val stockEntityCaptor = ArgumentCaptor.forClass(StockEntity::class.java)
+            verify(stockRepository).save(stockEntityCaptor.capture())
 
-            val savedStock = stockCaptor.value
+            val savedStock = stockEntityCaptor.value
             assertNotNull(savedStock.deletedAt)
             assertEquals(stockId, savedStock.id)
         }

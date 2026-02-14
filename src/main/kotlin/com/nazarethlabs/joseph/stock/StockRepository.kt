@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface StockRepository : JpaRepository<Stock, UUID> {
+interface StockRepository : JpaRepository<StockEntity, UUID> {
     @Query(value = "SELECT * FROM stocks WHERE ticker = :ticker", nativeQuery = true)
-    fun findByTickerIncludingDeleted(ticker: String): Stock?
+    fun findByTickerIncludingDeleted(ticker: String): StockEntity?
 }

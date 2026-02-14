@@ -27,8 +27,8 @@ class StockService(
             }
         }
 
-        val stock = Stock(ticker = request.ticker, companyName = request.companyName)
-        val savedStock = stockRepository.save(stock)
+        val stockEntity = StockEntity(ticker = request.ticker, companyName = request.companyName)
+        val savedStock = stockRepository.save(stockEntity)
         return savedStock.toResponse()
     }
 

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 data class BrapiQuoteResponse(
-    val results: List<BrapiQuoteResult>,
+    val results: List<BrapiQuoteResultResponse>,
 )
 
-data class BrapiQuoteResult(
+data class BrapiQuoteResultResponse(
     @JsonProperty("symbol")
     val symbol: String,
     @JsonProperty("longName")

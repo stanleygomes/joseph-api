@@ -20,5 +20,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: joseph-app
+#    restart: always
+#    networks:
+#      - joseph-net
+#    ports:
+#      - "8877:8080"
+#    depends_on:
+#      - postgres
+#    environment:
+#      SPRING_PROFILES_ACTIVE: dev
+#      BRAPI_TOKEN: abc123
+#      RESEND_APIKEY: abc123
+
 volumes:
   postgres_data:

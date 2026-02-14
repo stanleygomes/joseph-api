@@ -50,7 +50,7 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("deve manipular IntegrationException e retornar 502 Bad Gateway com mensagem genérica")
     fun `should handle IntegrationException and return 502 Bad Gateway`() {
-        val exception = IntegrationException("Erro de integração", RuntimeException("Causa raiz"))
+        val exception = IntegrationException("Erro de integração")
 
         val responseEntity = globalExceptionHandler.handleIntegrationException(exception)
 

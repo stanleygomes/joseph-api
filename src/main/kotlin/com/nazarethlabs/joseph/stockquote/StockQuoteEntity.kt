@@ -1,7 +1,7 @@
 package com.nazarethlabs.joseph.stockquote
 
 import com.fasterxml.jackson.annotation.JsonBackReference
-import com.nazarethlabs.joseph.stock.Stock
+import com.nazarethlabs.joseph.stock.StockEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -19,14 +19,14 @@ import java.util.UUID
 
 @Entity
 @Table(name = "stock_quotes")
-data class StockQuote(
+data class StockQuoteEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id", nullable = false)
     @JsonBackReference
-    val stock: Stock? = null,
+    val stockEntity: StockEntity? = null,
     @Column(name = "quote_date", nullable = false)
     var quoteDate: LocalDate? = LocalDate.now(),
     @Column(name = "open_price")

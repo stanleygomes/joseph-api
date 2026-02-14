@@ -10,6 +10,18 @@ data class StockQuoteQueryResponse(
     val volume: Long?,
 )
 
-data class StockQuotePendingResponse(
-    val message: String,
+data class StockQuoteDayComparisonDto(
+    val ticker: String,
+    val companyName: String,
+    val todayQuote: BigDecimal?,
+    val yesterdayQuote: BigDecimal?,
+)
+
+data class StockReportItem(
+    val ticker: String,
+    val companyName: String,
+    val todayQuote: String,
+    val yesterdayQuote: String,
+    val percentChange: String,
+    val changeClass: String,
 )
