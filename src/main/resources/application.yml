@@ -2,14 +2,22 @@ spring:
   application:
     name: joseph-api
   datasource:
-    url: jdbc:postgresql://localhost:5555/joseph
-    username: joseph
-    password: egypt-governor
+    url: ${DATABASE_URI:jdbc:postgresql://localhost:5555/joseph}
+    username: ${DATABASE_USERNAME:joseph}
+    password: ${DATABASE_PASSWORD:egypt-governor}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${OAUTH2_GITHUB_CLIENT_ID:abc123}
+            client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET:abc123}
+            scope: "user:email,read:user"
 
 server:
   servlet:
@@ -24,3 +32,15 @@ springdoc:
       version: v1.0.0
   swagger-ui:
     path: /docs
+
+integration:
+  brapi:
+    base-url: https://brapi.dev/api
+    token: ${BRAPI_TOKEN:abc123}
+  resend:
+    base-url: https://api.resend.com
+    api-key: ${RESEND_APIKEY:abc123}
+    config:
+      batch-size: 50
+    from: ${RESEND_FROM:JosephApi <onboarding@resend.dev>}
+    report-recipient: ${RESEND_REPORT_RECIPIENT:admin@seudominio.com}

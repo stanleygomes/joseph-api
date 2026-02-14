@@ -1,15 +1,14 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
+    kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.5.3"
-    id("io.spring.dependency-management") version "1.1.7"
+    id("org.springframework.boot") version "3.3.2"
+    id("io.spring.dependency-management") version "1.1.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("pl.allegro.tech.build.axion-release") version "1.17.1"
+    id("jacoco")
 }
 
 group = "com.nazarethlabs"
-// versão gerenciada pelo plugin Reckon a partir das tags do Git
-// version = "x.x.x"
+version = "x.x.x"
 
 java {
     toolchain {
@@ -24,14 +23,23 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.github.spullara.mustache.java:compiler:0.9.10")
+
     runtimeOnly("org.postgresql:postgresql")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -43,6 +51,42 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+// Relatório de cobertura
+tasks.jacocoTestReport.configure {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    classDirectories.setFrom(
+        files(
+            sourceSets.main.get().output.asFileTree.matching {
+                exclude(
+                    "**/core/client/**",
+                    "**/JosephApplication*",
+                    "**/*Entity*",
+                    "**/*Dto*",
+                    "**/*Request*",
+                    "**/*Response*",
+                )
+            },
+        ),
+    )
+    sourceDirectories.setFrom(
+        files(
+            sourceSets.main
+                .get()
+                .allSource.srcDirs,
+        ),
+    )
+    executionData.setFrom(files(layout.buildDirectory.file("jacoco/test.exec")))
 }
 
 // o plugin usa o arquivo .editorconfig para as regras de formatação
@@ -55,16 +99,4 @@ ktlint {
 // a verificação do Ktlint é executada junto com a task 'check' (ex: ./gradlew build)
 tasks.check {
     dependsOn(tasks.ktlintCheck)
-}
-
-// tarefa para gerar o CHANGELOG.md usando conventional-changelog-cli
-// pré-requisito: npm install -g conventional-changelog-cli --registry=https://registry.npmjs.org/
-tasks.register("generateChangelog", Exec::class) {
-    description = "Gera o CHANGELOG.md a partir dos conventional commits."
-    commandLine("conventional-changelog", "-p", "eslint", "-i", "CHANGELOG.md", "-s", "--release-count", "1", "append", "true")
-    isIgnoreExitValue = true
-}
-
-tasks.processResources {
-    expand(project.properties)
 }

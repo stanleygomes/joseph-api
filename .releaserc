@@ -1,0 +1,53 @@
+{
+  "branches": ["master"],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits",
+        "releaseRules": [
+          { "type": "feat", "release": "minor" },
+          { "type": "fix", "release": "patch" },
+          { "type": "chore", "release": false },
+          { "type": "docs", "release": false },
+          { "type": "test", "release": false }
+        ],
+        "parserOpts": {
+          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+        }
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits",
+        "writerOpts": {
+          "commitGroupsSort": "title",
+          "commitsSort": ["scope", "subject"],
+          "groupBy": "type",
+          "types": [
+            { "type": "feat", "section": "Features", "group": "features" },
+            { "type": "fix", "section": "Bug Fixes", "group": "fixes" },
+            { "type": "test", "section": "Tests", "group": "tests" },
+            { "type": "chore", "section": "Chores", "group": "chores" },
+            { "type": "docs", "section": "Documentation", "group": "docs" }
+          ]
+        }
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md",
+        "changelogTitle": "# Changelog"
+      }
+    ],
+    "@semantic-release/github",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "./scripts/update-version.sh ${nextRelease.version}"
+      }
+    ]
+  ]
+}

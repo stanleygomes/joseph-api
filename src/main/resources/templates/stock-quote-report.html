@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Seu report chegou</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pixelify Sans', monospace, Arial, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 32px auto;
+            background: #23272e;
+            padding: 32px 24px;
+        }
+        h1 {
+            color: #1a7f37;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 0 #000;
+        }
+        .subtitle {
+            color: #b2dfdb;
+            margin-bottom: 24px;
+            font-size: 1.1em;
+        }
+        .highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .highlight {
+            flex: 1 1 220px;
+            background: #181c20;
+            border: none;
+            padding: 18px 14px;
+            text-align: center;
+            min-width: 100px;
+            box-shadow: 6px 6px 0 #1a7f37;
+            position: relative;
+        }
+        .highlight-title {
+            color: #b2dfdb;
+            font-size: 1.1em;
+            margin-bottom: 6px;
+        }
+        .highlight-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+            font-family: monospace, Arial, sans-serif;
+        }
+        .highlight-ticker {
+            color: #1a7f37;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .list {
+            margin-bottom: 32px;
+        }
+        .stock-card {
+            background: #181c20;
+            margin-bottom: 14px;
+            padding: 16px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .stock-info {
+            flex: 1;
+        }
+        .stock-ticker {
+            color: #1a7f37;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .stock-name {
+            color: #b2dfdb;
+            font-size: 1em;
+        }
+        .stock-quotes {
+            font-family: monospace, Arial, sans-serif;
+            margin-top: 6px;
+            font-size: 0.98em;
+        }
+        .stock-quotes span {
+            font-weight: bold;
+        }
+        .quote-up { color: #4caf50; font-weight: bold; }
+        .quote-down { color: #e53935; font-weight: bold; }
+        .quote-neutral { color: #b2dfdb; font-weight: bold; }
+        .footer {
+            color: #b2dfdb;
+            font-size: 0.95em;
+            margin-top: 24px;
+            text-align: center;
+        }
+        .chart-container {
+            display: none;
+        }
+        h1, .highlight-title, .stock-name, .subtitle, .footer {
+            font-family: Arial, sans-serif;
+        }
+        .highlight-value, .stock-quotes, .stock-quotes span {
+            font-family: monospace, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈Seu report chegou!</h1>
+        <div class="subtitle">Aqui está o resumo das cotações das ações nas últimas 24h.</div>
+
+        <!-- Destaques -->
+        <div class="highlights">
+            <div class="highlight">
+                <div class="highlight-title">Maior valorização</div>
+                <div class="highlight-ticker">{{highestGain.ticker}}</div>
+                <div class="highlight-value">{{highestGain.percentChange}}%</div>
+                <div>{{highestGain.companyName}}</div>
+            </div>
+            <div class="highlight">
+                <div class="highlight-title">Maior desvalorização</div>
+                <div class="highlight-ticker">{{highestLoss.ticker}}</div>
+                <div class="highlight-value">{{highestLoss.percentChange}}%</div>
+                <div>{{highestLoss.companyName}}</div>
+            </div>
+            <div class="highlight">
+                <div class="highlight-title">Maior cotação hoje</div>
+                <div class="highlight-ticker">{{highestToday.ticker}}</div>
+                <div class="highlight-value">R$ {{highestToday.todayQuote}}</div>
+                <div>{{highestToday.companyName}}</div>
+            </div>
+            <div class="highlight">
+                <div class="highlight-title">Menor cotação hoje</div>
+                <div class="highlight-ticker">{{lowestToday.ticker}}</div>
+                <div class="highlight-value">R$ {{lowestToday.todayQuote}}</div>
+                <div>{{lowestToday.companyName}}</div>
+            </div>
+        </div>
+
+        <!-- Gráfico de variação percentual -->
+        <!-- <div class="chart-container highlight">
+            <canvas id="chart-variacao" height="120"></canvas>
+        </div> -->
+
+        <div class="subtitle">Detalhamento por ação</div>
+        <!-- Lista de ações -->
+        <div class="list">
+            {{#stocks}}
+            <div class="stock-card highlight">
+                <div class="stock-info">
+                    <div class="stock-ticker">{{ticker}}</div>
+                    <div class="stock-name">{{companyName}}</div>
+                    <div class="stock-quotes">
+                        Hoje: <span>{{todayQuote}}</span> | Ontem: <span>{{yesterdayQuote}}</span> |
+                        <span class="{{changeClass}}">{{percentChange}}%</span>
+                    </div>
+                </div>
+            </div>
+            {{/stocks}}
+        </div>
+
+        <div class="footer">
+            <span style="font-size:0.9em;">Powered by Joseph API</span>
+        </div>
+    </div>
+    <script>
+        // Chart.js is not supported in most email clients, so this script is disabled.
+    </script>
+</body>
+</html>

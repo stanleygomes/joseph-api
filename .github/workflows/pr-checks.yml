@@ -60,9 +60,22 @@ jobs:
         run: ./gradlew test jacocoTestReport
       - name: Check coverage percentage
         run: |
-          COVERAGE=$(grep -oPm1 "(?<=<counter type=\"INSTRUCTION\" missed=\"[0-9]+\" covered=\")[0-9]+" build/reports/jacoco/test/jacocoTestReport.xml)
-          if [ "$COVERAGE" -lt 80 ]; then
-            echo "Coverage below 80%"
+          COUNTER_LINE=$(grep -m1 '<counter type="INSTRUCTION"' build/reports/jacoco/test/jacocoTestReport.xml)
+          MISSED=$(echo "$COUNTER_LINE" | sed -n 's/.*missed="\([0-9]\+\)".*/\1/p')
+          COVERED=$(echo "$COUNTER_LINE" | sed -n 's/.*covered="\([0-9]\+\)".*/\1/p')
+          if [ -z "$MISSED" ] || [ -z "$COVERED" ]; then
+            echo "Could not extract coverage data."
+            exit 1
+          fi
+          TOTAL=$((MISSED + COVERED))
+          if [ "$TOTAL" -gt 0 ]; then
+            PERCENT=$((COVERED * 100 / TOTAL))
+          else
+            PERCENT=0
+          fi
+          echo "Coverage percentage: $PERCENT%"
+          if [ "$PERCENT" -lt 95 ]; then
+            echo "Coverage below 95%. Actual: $PERCENT%"
             exit 1
           fi
 
@@ -73,12 +86,3 @@ jobs:
       - uses: wagoid/commitlint-github-action@v5
         with:
           configFile: .github/commitlint.config.js
-
-  dependabot:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check for vulnerable dependencies
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: dependencyCheckAnalyze

@@ -1,5 +1,5 @@
 package com.nazarethlabs.joseph.core.exceptions
 
-class ResourceNotFoundException(
+class ResourceAlreadyExistsException(
     message: String,
 ) : RuntimeException(message)

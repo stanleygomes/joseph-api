@@ -4,18 +4,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class OpenApiConfigTest {
-
     @Test
     fun `customOpenAPI deve criar o bean OpenAPI com as informações corretas`() {
         val expectedTitle = "Joseph API"
         val expectedVersion = "v1.0.0"
         val expectedDescription = "API para gestão de finanças pessoais."
 
-        val openApiConfig = OpenApiConfig(
-            title = expectedTitle,
-            version = expectedVersion,
-            description = expectedDescription
-        )
+        val openApiConfig =
+            OpenApiConfig(
+                title = expectedTitle,
+                version = expectedVersion,
+                description = expectedDescription,
+            )
 
         val resultOpenAPI = openApiConfig.customOpenAPI()
 

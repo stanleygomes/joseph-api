@@ -10,22 +10,17 @@ import org.springframework.context.annotation.Configuration
 class OpenApiConfig(
     @Value("\${springdoc.api-docs.info.title}")
     private val title: String,
-
     @Value("\${springdoc.api-docs.info.version}")
     private val version: String,
-
     @Value("\${springdoc.api-docs.info.description}")
     private val description: String,
 ) {
-    private fun buildApiInfo(): Info {
-        return Info()
+    private fun buildApiInfo(): Info =
+        Info()
             .title(title)
             .version(version)
             .description(description)
-    }
 
     @Bean
-    fun customOpenAPI(): OpenAPI {
-        return OpenAPI().info(this.buildApiInfo())
-    }
+    fun customOpenAPI(): OpenAPI = OpenAPI().info(this.buildApiInfo())
 }

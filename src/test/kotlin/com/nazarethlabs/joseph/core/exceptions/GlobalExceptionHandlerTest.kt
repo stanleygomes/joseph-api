@@ -31,4 +31,36 @@ class GlobalExceptionHandlerTest {
         assertEquals(1, body?.size)
         assertEquals(errorMessage, body?.get("error"))
     }
+
+    @Test
+    @DisplayName("deve manipular ResourceAlreadyExistsException e retornar 409 Conflict com a mensagem de erro correta")
+    fun `should handle ResourceAlreadyExistsException and return 409 Conflict`() {
+        val errorMessage = "Recurso já existe."
+        val exception = ResourceAlreadyExistsException(errorMessage)
+
+        val responseEntity = globalExceptionHandler.handleResourceAlreadyExists(exception)
+
+        assertEquals(HttpStatus.CONFLICT, responseEntity.statusCode)
+        val body = responseEntity.body
+        assertNotNull(body)
+        assertEquals(1, body?.size)
+        assertEquals(errorMessage, body?.get("error"))
+    }
+
+    @Test
+    @DisplayName("deve manipular IntegrationException e retornar 502 Bad Gateway com mensagem genérica")
+    fun `should handle IntegrationException and return 502 Bad Gateway`() {
+        val exception = IntegrationException("Erro de integração")
+
+        val responseEntity = globalExceptionHandler.handleIntegrationException(exception)
+
+        assertEquals(HttpStatus.BAD_GATEWAY, responseEntity.statusCode)
+        val body = responseEntity.body
+        assertNotNull(body)
+        assertEquals(1, body?.size)
+        assertEquals(
+            "Ocorreu uma falha ao comunicar com um serviço externo. Tente novamente mais tarde.",
+            body?.get("error"),
+        )
+    }
 }

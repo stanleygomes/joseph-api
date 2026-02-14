@@ -40,9 +40,11 @@ class StockControllerTest {
 
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(stockController)
-            .setControllerAdvice(GlobalExceptionHandler())
-            .build()
+        mockMvc =
+            MockMvcBuilders
+                .standaloneSetup(stockController)
+                .setControllerAdvice(GlobalExceptionHandler())
+                .build()
     }
 
     private val baseUrl = "/v1/stocks"
@@ -56,12 +58,12 @@ class StockControllerTest {
             val response = StockResponse(id = UUID.randomUUID(), ticker = "PETR4", companyName = "Petrobras")
             whenever(stockService.createStock(any())).thenReturn(response)
 
-            mockMvc.perform(
-                post(baseUrl)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)),
-            )
-                .andExpect(status().isCreated)
+            mockMvc
+                .perform(
+                    post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)),
+                ).andExpect(status().isCreated)
                 .andExpect(jsonPath("$.id").value(response.id.toString()))
                 .andExpect(jsonPath("$.ticker").value("PETR4"))
 
@@ -81,7 +83,8 @@ class StockControllerTest {
                 )
             whenever(stockService.getAllStocks()).thenReturn(stocks)
 
-            mockMvc.perform(get(baseUrl))
+            mockMvc
+                .perform(get(baseUrl))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].ticker").value("PETR4"))
@@ -98,7 +101,8 @@ class StockControllerTest {
             val response = StockResponse(id = stockId, ticker = "ITUB4", companyName = "Itaú Unibanco")
             whenever(stockService.getStockById(stockId)).thenReturn(response)
 
-            mockMvc.perform(get("$baseUrl/$stockId"))
+            mockMvc
+                .perform(get("$baseUrl/$stockId"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.id").value(stockId.toString()))
         }
@@ -108,7 +112,8 @@ class StockControllerTest {
             val nonExistentId = UUID.randomUUID()
             whenever(stockService.getStockById(nonExistentId)).thenThrow(ResourceNotFoundException("Stock not found"))
 
-            mockMvc.perform(get("$baseUrl/$nonExistentId"))
+            mockMvc
+                .perform(get("$baseUrl/$nonExistentId"))
                 .andExpect(status().isNotFound)
         }
     }
@@ -121,7 +126,8 @@ class StockControllerTest {
             val stockId = UUID.randomUUID()
             doNothing().whenever(stockService).deleteStock(stockId)
 
-            mockMvc.perform(delete("$baseUrl/$stockId"))
+            mockMvc
+                .perform(delete("$baseUrl/$stockId"))
                 .andExpect(status().isNoContent)
 
             verify(stockService).deleteStock(stockId)
@@ -132,7 +138,8 @@ class StockControllerTest {
             val nonExistentId = UUID.randomUUID()
             whenever(stockService.deleteStock(nonExistentId)).thenThrow(ResourceNotFoundException("Stock not found"))
 
-            mockMvc.perform(delete("$baseUrl/$nonExistentId"))
+            mockMvc
+                .perform(delete("$baseUrl/$nonExistentId"))
                 .andExpect(status().isNotFound)
         }
     }
